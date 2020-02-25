@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
@@ -33,15 +34,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab, fab1, fab2;
+    private FloatingActionButton fab, add_fab, checklist_fab;
 
-    private TextView location;
+    private LottieAnimationView animationView;
+
     private TextView cityField;
     private TextView updatedField;
-    private TextView detailsField;
     private TextView currentTemperatureField;
     private TextView weatherIcon;
-    private TextView needy;
     ArrayList<String> needs = new ArrayList<>();
 
     Handler handler;
@@ -55,12 +55,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        location = findViewById(R.id.location);
         cityField = (TextView) findViewById(R.id.city_field);
         updatedField = (TextView) findViewById(R.id.updated_field);
-        detailsField = (TextView) findViewById(R.id.details_field);
         currentTemperatureField = (TextView) findViewById(R.id.current_temperature_field);
-        weatherIcon = (TextView) findViewById(R.id.weather_icon);
+        //weatherIcon = (TextView) findViewById(R.id.weather_icon);
+
+        animationView = (LottieAnimationView) findViewById(R.id.lottie);
 
         gpsTracker = new GpsTracker(this);
         latitude = gpsTracker.getLatitude();
@@ -70,15 +70,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
-        fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        add_fab = (FloatingActionButton) findViewById(R.id.add_fab);
+        checklist_fab = (FloatingActionButton) findViewById(R.id.checklist_fab);
 
         fab.setOnClickListener(this);
-        fab1.setOnClickListener(this);
-        fab2.setOnClickListener(this);
+        add_fab.setOnClickListener(this);
+        checklist_fab.setOnClickListener(this);
 
-
-        location.setText("latitude: "+latitude+", longitude: "+longitude);
         updateWeatherData(latitude, longitude);
         needs.add("a");
         needs.add("b");
@@ -202,12 +200,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ", " +
                     json.getJSONObject("sys").getString("country"));
 
-            // set details field
+            /* set details field
             detailsField.setText(
                     details.getString("description").toUpperCase(Locale.US) +
                             "\n" + "Humidity: " + main.getString("humidity") + "%" +
                             "\n" + "Pressure: " + main.getString("pressure") + " hPa");
-
+*/
             // Set temperature field
             String formatTemp = main.getDouble("temp") + " ℃";
             currentTemperatureField.setText(formatTemp);
@@ -233,38 +231,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String icon = "";
         if (actualId == 800) {
             if (openIcon.equals("01d")) {
-                icon = MainActivity.this.getString(R.string.weather_sunny);
+                //icon = MainActivity.this.getString(R.string.weather_sunny);
+                animationView.setAnimation("sunny2.json");
                 needs.add("양산");
             } else {
-                icon = MainActivity.this.getString(R.string.weather_clear_night);
+                //icon = MainActivity.this.getString(R.string.weather_clear_night);
+                animationView.setAnimation("clear_night.json");
             }
         } else {
             switch (id) {
                 case 2:
-                    icon = MainActivity.this.getString(R.string.weather_thunder);
+                    //icon = MainActivity.this.getString(R.string.weather_thunder);
+                    animationView.setAnimation("thunder.json");
                     needs.add("우산");
                     break;
                 case 3:
-                    icon = MainActivity.this.getString(R.string.weather_drizzle);
+                    //icon = MainActivity.this.getString(R.string.weather_drizzle);
+                    animationView.setAnimation("rain.json");
                     needs.add("우산");
                     break;
                 case 7:
-                    icon = MainActivity.this.getString(R.string.weather_foggy);
+                    animationView.setAnimation("haze.json");
+                    //icon = MainActivity.this.getString(R.string.weather_foggy);
                     break;
                 case 8:
-                    icon = MainActivity.this.getString(R.string.weather_cloudy);
+                    animationView.setAnimation("cloudy.json");
+                    //icon = MainActivity.this.getString(R.string.weather_cloudy);
                     break;
                 case 6:
-                    icon = MainActivity.this.getString(R.string.weather_snowy);
+                    animationView.setAnimation("snow.json");
+                    //icon = MainActivity.this.getString(R.string.weather_snowy);
                     needs.add("우산(눈)");
                     break;
                 case 5:
-                    icon = MainActivity.this.getString(R.string.weather_rainy);
+                    if(actualId == 502 || actualId == 503 || actualId == 504){
+                        animationView.setAnimation("storm.json");}
+                    else{
+                        animationView.setAnimation("rain.json");
+                    }
+                    //icon = MainActivity.this.getString(R.string.weather_rainy);
                     needs.add("우산");
                     break;
             }
         }
-        weatherIcon.setText(icon);
+        //weatherIcon.setText(icon);
+        animationView.playAnimation();
     }
 
     @Override
@@ -275,29 +286,109 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 anim();
                 Toast.makeText(this, "Floating Action Button", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.fab1:
+            case R.id.add_fab:
                 anim();
-                Toast.makeText(this, "Button1", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Button1", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+
+                ad.setTitle("내일 준비물");       // 제목 설정
+                ad.setMessage("준비물을 입력해주세요");   // 내용 설정
+
+                // EditText 삽입하기
+                final EditText et = new EditText(MainActivity.this);
+                ad.setView(et);
+
+                // 확인 버튼 설정
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("TAG", "Yes Btn Click");
+
+                        // Text 값 받아서 로그 남기기
+                        String value = et.getText().toString();
+                        value = value.trim();
+                        if(value.length() == 0){
+                            Log.d("TAG", "NO");
+                        }else {
+                            needs.add(value);
+                            Log.d("TAG", "TTT");
+                        }
+                        Log.d("TAG", value);
+
+                        dialog.dismiss();     //닫기
+                        // Event
+                    }
+                });
+
+                // 취소 버튼 설정
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("TAG","No Btn Click");
+                        dialog.dismiss();     //닫기
+                        // Event
+                    }
+                });
+                // 창 띄우기
+                ad.show();
                 break;
-            case R.id.fab2:
+            case R.id.checklist_fab:
                 anim();
-                Toast.makeText(this, "Button2", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Button2", Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setTitle("오늘의 준비물");
+                String items = "";
+                if(needs.isEmpty()) {
+                    builder.setMessage("없음");
+                }else {
+                    for(int i = 0; i<needs.size(); i++){
+                        if(i == needs.size()-1){
+                            items += needs.get(i);
+                        }else{
+                            items += needs.get(i) + ", ";
+                        }
+                    }
+                    Log.d("errrrr", items);
+                    builder.setMessage(items);
+                }
+                builder.setPositiveButton("챙겼어요", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        needs.clear();
+                        Toast.makeText(getApplicationContext(), "목록을 삭제했습니다", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("아직 못 챙겼어요", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        //needs.clear();
+                        //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+
+                alertDialog.show();
                 break;
         }
     }
     public void anim() {
 
         if (isFabOpen) {
-            fab1.startAnimation(fab_close);
-            fab2.startAnimation(fab_close);
-            fab1.setClickable(false);
-            fab2.setClickable(false);
+            add_fab.startAnimation(fab_close);
+            checklist_fab.startAnimation(fab_close);
+            add_fab.setClickable(false);
+            checklist_fab.setClickable(false);
             isFabOpen = false;
         } else {
-            fab1.startAnimation(fab_open);
-            fab2.startAnimation(fab_open);
-            fab1.setClickable(true);
-            fab2.setClickable(true);
+            add_fab.startAnimation(fab_open);
+            checklist_fab.startAnimation(fab_open);
+            add_fab.setClickable(true);
+            checklist_fab.setClickable(true);
             isFabOpen = true;
         }
     }

@@ -8,46 +8,40 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="sunny2.json"
+        app:lottie_loop="true" />
+
     <TextView
         android:id="@+id/updated_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="UPDATE"
-        app:layout_constraintBottom_toTopOf="@+id/city_field"
-        tools:layout_editor_absoluteX="181dp" />
-
-    <TextView
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LOCATION" />
+        android:layout_gravity="center_horizontal"
+        android:text="UPDATE" />
 
     <TextView
         android:id="@+id/city_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CITY"
-        app:layout_constraintBottom_toTopOf="@+id/details_field"
-        tools:layout_editor_absoluteX="181dp" />
-
-    <TextView
-        android:id="@+id/details_field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DETAIL"
-        app:layout_constraintBottom_toTopOf="@+id/location"
-        tools:layout_editor_absoluteX="181dp" />
+        android:layout_gravity="center_horizontal"
+        android:text="CITY" />
 
     <TextView
         android:id="@+id/current_temperature_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="29dp"
+        android:layout_gravity="center_horizontal"
         android:text="TEMPERATURE"
-        app:layout_constraintBottom_toTopOf="@+id/updated_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
+<!--
     <TextView
         android:id="@+id/weather_icon"
         android:layout_width="wrap_content"
@@ -57,7 +51,7 @@
         app:layout_constraintBottom_toTopOf="@+id/current_temperature_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
+-->
     <Button
         android:id="@+id/needy"
         android:layout_width="wrap_content"
@@ -66,8 +60,7 @@
         android:text="needy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/add"
@@ -77,29 +70,32 @@
         android:text="추가하기" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab1"
+        android:id="@+id/add_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="5dp"
+        android:layout_margin="15dp"
         android:visibility="invisible"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:backgroundTint="#ffffff"
+        app:srcCompat="@drawable/add" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab2"
+        android:id="@+id/checklist_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="5dp"
+        android:layout_margin="15dp"
         android:visibility="invisible"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:backgroundTint="#ffffff"
+        app:srcCompat="@drawable/checklist" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="5dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:layout_margin="15dp"
+        app:backgroundTint="#607D8B"
+        app:srcCompat="@drawable/check" />
 
 </LinearLayout>
