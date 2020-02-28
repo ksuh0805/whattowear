@@ -22,9 +22,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
 
-import java.sql.Date;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 public class Fragment1 extends Fragment implements View.OnClickListener{
@@ -133,7 +133,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
             // Set update message
             DateFormat df = DateFormat.getDateTimeInstance();
-            String updateTime = df.format(new Date(json.getLong("dt") * 1000));
+            String updateTime = df.format(new Date((json.getLong("dt") + json.getLong("timezone")) * 1000));
             String updateMsg = "Last update: ";
             String updateText = updateMsg + updateTime;
             updatedField.setText(updateText);
@@ -312,5 +312,8 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
             checklist_fab.setClickable(true);
             isFabOpen = true;
         }
+    }
+    public void setClear(){
+        needs.clear();
     }
 }

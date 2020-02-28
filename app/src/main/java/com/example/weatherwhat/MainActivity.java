@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity{
                 }else if(position==2){
                     selected = fragment3;
                 }
-                fragment1.needs.clear();
+                fragment1.setClear();
 
                 getSupportFragmentManager().beginTransaction().replace(R.id.container, selected).commit();
             }
