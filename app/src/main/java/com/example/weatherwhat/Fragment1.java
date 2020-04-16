@@ -77,6 +77,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         checklist_fab.setOnClickListener(this);
 
         updateWeatherData(latitude, longitude);
+        Log.d("latitude",latitude+ ", " +longitude);
         needs.add("a");
         needs.add("b");
         return view;
@@ -85,7 +86,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     private void updateWeatherData(final double lat, final double lon) {
         new Thread() {
             public void run() {
-                final JSONObject json = RemoteFetch.getJSON(getContext(), 37.399319, 126.966911);
+                final JSONObject json = RemoteFetch.getJSON(getContext(), lat, lon);
                 if (json == null) {
                     handler.post(new Runnable() {
                         public void run() {
@@ -123,7 +124,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
                             "\n" + "Pressure: " + main.getString("pressure") + " hPa");
 */
             // Set temperature field
-            String formatTemp = main.getDouble("temp") + " ℃";
+            String formatTemp = "현재 기온 : " + main.getDouble("temp") + " ℃";
             if(main.getDouble("temp_max") >= 30){
                 needs.add("양산");
             }else{
@@ -134,7 +135,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
             // Set update message
             DateFormat df = DateFormat.getDateTimeInstance();
             String updateTime = df.format(new Date((json.getLong("dt") + json.getLong("timezone")) * 1000));
-            String updateMsg = "Last update: ";
+            String updateMsg = "마지막 업데이트: ";
             String updateText = updateMsg + updateTime;
             updatedField.setText(updateText);
             Log.d("TAG", "NOdd");

@@ -38,22 +38,6 @@ public class MainActivity extends AppCompatActivity{
     Fragment2 fragment2;
     Fragment3 fragment3;
 
-    public GpsTracker gpsTracker;
-    private double latitude;
-    private double longitude;
-
-    private Animation fab_open, fab_close;
-    private Boolean isFabOpen = false;
-    private FloatingActionButton fab, add_fab, checklist_fab;
-
-    private LottieAnimationView animationView;
-
-    private TextView cityField;
-    private TextView updatedField;
-    private TextView currentTemperatureField;
-    private TextView weatherIcon;
-    ArrayList<String> needs = new ArrayList<>();
-
     Handler handler;
 
     public MainActivity() {

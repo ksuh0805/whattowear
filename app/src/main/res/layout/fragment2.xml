@@ -5,11 +5,6 @@
     android:layout_height="match_parent"
     android:layout_marginTop="120dp">
 
-    <Button
-        android:text="두번째"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <com.ramotion.foldingcell.FoldingCell
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/folding_cell"
@@ -26,7 +21,9 @@
             android:visibility="gone">
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="250dp" />
+                android:layout_height="250dp"
+                android:gravity="center"
+                android:text="Content view"/>
         </FrameLayout>
         ​
         <FrameLayout
@@ -36,7 +33,14 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@android:color/holo_blue_dark" />
+                android:background="@android:color/holo_blue_dark"
+                android:gravity="center"
+                android:text="Title view"/>
+            <ImageView
+                android:id="@+id/imageview"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                ></ImageView>
         </FrameLayout>
         ​
     </com.ramotion.foldingcell.FoldingCell>
