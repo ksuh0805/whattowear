@@ -38,7 +38,7 @@ public class Fragment2 extends Fragment{
         });
         Glide.with(this).load("http://10.0.2.2/firstapp/kk.jpg").into(imageview);
 
-
+        //"http://10.0.2.2/firstapp/kk.jpg"
         return view;
     }
 }
