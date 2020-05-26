@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +41,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private TextView mAuthorView;
     private TextView mTitleView;
     private TextView mBodyView;
+    private ImageView mImgView;
     private EditText mCommentField;
     private MaterialButton mCommentButton;
     private RecyclerView mCommentsRecycler;
@@ -64,6 +67,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mAuthorView = findViewById(R.id.postAuthor);
         mTitleView = findViewById(R.id.postTitle);
         mBodyView = findViewById(R.id.postBody);
+        mImgView = findViewById(R.id.post_img);
         mCommentField = findViewById(R.id.fieldCommentText);
         mCommentButton = findViewById(R.id.buttonPostComment);
         mCommentsRecycler = findViewById(R.id.recyclerPostComments);
@@ -88,6 +92,13 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 mAuthorView.setText(post.author);
                 mTitleView.setText(post.title);
                 mBodyView.setText(post.body);
+                Log.d("TAG", post.title);
+                String imgUrl = post.imgUrl;
+                if(imgUrl == null) {
+                    Glide.with(getApplicationContext()).load("http://10.0.2.2/firstapp/kk.jpg").into(mImgView);
+                }else{
+                Glide.with(getApplicationContext()).load(imgUrl).into(mImgView);
+                }
                 // [END_EXCLUDE]
             }
 

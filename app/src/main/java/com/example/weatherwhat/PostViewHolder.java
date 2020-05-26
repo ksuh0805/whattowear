@@ -1,10 +1,13 @@
 package com.example.weatherwhat;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
 
@@ -24,12 +27,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         bodyView = itemView.findViewById(R.id.postBody);
     }
 
-    public void bindToPost(Post post, View.OnClickListener starClickListener) {
+    public void bindToPost(Context context, Post post, View.OnClickListener starClickListener) {
         titleView.setText(post.title);
         authorView.setText(post.author);
         numStarsView.setText(String.valueOf(post.starCount));
         bodyView.setText(post.body);
-
         starView.setOnClickListener(starClickListener);
     }
 }

@@ -40,7 +40,7 @@ public class Post {
         result.put("body", body);
         result.put("starCount", starCount);
         result.put("stars", stars);
-        result.put("imageUrl", imgUrl);
+        result.put("imgUrl", imgUrl);
 
         return result;
     }
