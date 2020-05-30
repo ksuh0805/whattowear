@@ -20,7 +20,7 @@
         android:layout_below="@+id/postAuthorLayout"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         />
 
     <include
@@ -31,7 +31,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/postAuthorLayout"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="200dp" />
+        android:layout_marginTop="300dp" />
 
     <LinearLayout
         android:id="@+id/commentForm"

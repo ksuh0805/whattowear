@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ramotion.foldingcell.FoldingCell
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/folding_cell_ex"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <FrameLayout
+        android:id="@+id/cell_content_view_ex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/cell_info"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:gravity="center"
+            android:text="Content view"/>
+    </FrameLayout>
+    ​
+    <FrameLayout
+        android:id="@+id/cell_title_view_ex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/cell_name"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:text="Title view"/>
+        <ImageView
+            android:id="@+id/imageview_ex"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            ></ImageView>
+    </FrameLayout>
+    ​
+</com.ramotion.foldingcell.FoldingCell>
