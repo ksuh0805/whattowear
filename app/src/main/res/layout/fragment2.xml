@@ -13,14 +13,14 @@
         android:layout_marginBottom="20dp"
         android:layout_marginRight="12dp"
         android:layout_marginTop="100dp"
-        android:src="@drawable/ic_check_black_24dp"/>
+        android:src="@drawable/shirt"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ClothesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:clipToPadding="false"
-        android:padding="5dp"
+        android:clipToPadding="true"
+        android:padding="10dp"
         android:scrollbars="vertical"
         tools:listitem="@layout/cell" />
 

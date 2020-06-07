@@ -1,5 +1,6 @@
 package com.example.weatherwhat;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,9 +17,17 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import org.json.JSONObject;
 
@@ -32,16 +41,23 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     private double latitude;
     private double longitude;
 
+    private DatabaseReference mDatabase;
+    private FirebaseRecyclerAdapter<Cloth, ClothViewHolder> mAdapter;
+    private RecyclerView mRecycler;
+    private Context context;
+    private LinearLayoutManager mManager;
+
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
     private FloatingActionButton fab, add_fab, checklist_fab;
 
     private LottieAnimationView animationView;
 
+    private double temp_max;
     private TextView cityField;
-    private TextView updatedField;
+    //private TextView updatedField;
     private TextView currentTemperatureField;
-    private TextView weatherIcon;
+    //private TextView weatherIcon;
     ArrayList<String> needs = new ArrayList<>();
 
     Handler handler;
@@ -55,9 +71,15 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment1, container, false);
         cityField = (TextView) view.findViewById(R.id.city_field);
-        updatedField = (TextView) view.findViewById(R.id.updated_field);
+        //updatedField = (TextView) view.findViewById(R.id.updated_field);
         currentTemperatureField = (TextView) view.findViewById(R.id.current_temperature_field);
         //weatherIcon = (TextView) findViewById(R.id.weather_icon);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        context = getContext();
+        mRecycler = view.findViewById(R.id.ClothList);
+        mRecycler.setHasFixedSize(true);
 
         animationView = (LottieAnimationView) view.findViewById(R.id.lottie);
 
@@ -125,13 +147,14 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 */
             // Set temperature field
             String formatTemp = "현재 기온 : " + main.getDouble("temp") + " ℃";
+            temp_max = main.getDouble("temp_max");
             if(main.getDouble("temp_max") >= 30){
                 needs.add("양산");
             }else{
                 needs.add("노양산");
             }
             currentTemperatureField.setText(formatTemp);
-
+            /*
             // Set update message
             DateFormat df = DateFormat.getDateTimeInstance();
             String updateTime = df.format(new Date((json.getLong("dt") + json.getLong("timezone")) * 1000));
@@ -139,6 +162,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
             String updateText = updateMsg + updateTime;
             updatedField.setText(updateText);
             Log.d("TAG", "NOdd");
+            */
 
             // Use setWeatherIcon method - pass 2 parameters id and icon
             setWeatherIcon(details.getInt("id"), details.getString("icon"));
@@ -316,5 +340,93 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     }
     public void setClear(){
         needs.clear();
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Set up FirebaseRecyclerAdapter with the Query
+        Query clothesQuery = getQuery(mDatabase, "반팔");
+        if(temp_max >= 28){
+            clothesQuery = getQuery(mDatabase, "반팔");
+        }else if(temp_max < 28 && temp_max >= 20){
+            clothesQuery = getQuery(mDatabase, "긴팔");
+        }else if(temp_max <20 && temp_max >= 17 ){
+            clothesQuery = getQuery(mDatabase, "가디건");
+        }else if(temp_max <17 && temp_max >= 12 ){
+            clothesQuery = getQuery(mDatabase, "자켓");
+        }else if(temp_max <12 && temp_max >= 5 ){
+            clothesQuery = getQuery(mDatabase, "코트");
+        }else{
+            clothesQuery = getQuery(mDatabase, "패딩");
+        }
+        Query clothes2Query = getQuery(mDatabase, "패딩");
+
+        FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Cloth>()
+                .setQuery(clothesQuery, Cloth.class)
+                .build();
+
+        mManager = new LinearLayoutManager(getActivity());
+        mManager.setReverseLayout(true);
+        mManager.setStackFromEnd(true);
+        mRecycler.setLayoutManager(mManager);
+
+        mAdapter = new FirebaseRecyclerAdapter<Cloth, ClothViewHolder>(options) {
+
+            @Override
+            public ClothViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+                return new ClothViewHolder(inflater.inflate(R.layout.cell, viewGroup, false));
+            }
+
+            @Override
+            protected void onBindViewHolder(ClothViewHolder viewHolder, int position, final Cloth model) {
+                final DatabaseReference clothRef = getRef(position);
+
+                // Set click listener for the whole post view
+                /*final String clothKey = clothRef.getKey();
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Launch PostDetailActivity
+                        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+                        intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, clothKey);
+                        startActivity(intent);
+                    }
+                });*/
+
+
+                // Bind Post to ViewHolder
+                viewHolder.bindToCloth(context, model);
+            }
+        };
+        mRecycler.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mAdapter != null) {
+            mAdapter.startListening();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAdapter != null) {
+            mAdapter.stopListening();
+        }
+    }
+
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    public Query getQuery(DatabaseReference databaseReference, String cloth){
+        return databaseReference.child("user-clothes-category").child(getUid()).equalTo("반팔");
+               // .child(getUid()).child(cloth);
     }
 }

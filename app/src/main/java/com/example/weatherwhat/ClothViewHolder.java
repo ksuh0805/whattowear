@@ -15,6 +15,7 @@ public class ClothViewHolder extends RecyclerView.ViewHolder {
     public TextView nameView;
     public TextView categoryView;
     public ImageView imageView;
+    public ImageView head_image;
     public TextView numStarsView;
     public TextView infoView;
 
@@ -35,6 +36,7 @@ public class ClothViewHolder extends RecyclerView.ViewHolder {
         nameView = itemView.findViewById(R.id.cell_name);
         //categoryView = itemView.findViewById(R.id.postAuthor);
         imageView = itemView.findViewById(R.id.imageview_ex);
+        head_image = itemView.findViewById(R.id.head_image);
         //numStarsView = itemView.findViewById(R.id.postNumStars);
         infoView = itemView.findViewById(R.id.cell_info);
     }
@@ -45,5 +47,6 @@ public class ClothViewHolder extends RecyclerView.ViewHolder {
         //numStarsView.setText(String.valueOf(post.starCount));
         infoView.setText(cloth.info);
         Glide.with(context).load(cloth.imgUrl).into(imageView);
+        Glide.with(context).load(cloth.imgUrl).into(head_image);
     }
 }
