@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,11 +43,14 @@ public class ClosetActivity extends BaseActivity{
 
     private EditText mNameField;
     private EditText mInfoField;
+    private EditText mLocationField;
     private FloatingActionButton mSubmitButton;
     private ImageView cloth_selectImage;
     private Uri selectedImageUri;
     private String imageUrl;
     private String category;
+    private TextView order_spinner;
+    private TextView order_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +65,12 @@ public class ClosetActivity extends BaseActivity{
         Log.d("TAG", "AAA");
         mNameField = findViewById(R.id.fieldName);
         mInfoField = findViewById(R.id.fieldInfo);
+        mLocationField = findViewById(R.id.fieldLocation);
         mSubmitButton = findViewById(R.id.fabSave);
         cloth_selectImage = findViewById(R.id.selectClothImage);
+
+        order_spinner = findViewById(R.id.order_spinner);
+        order_image = findViewById(R.id.order_image);
 
         Spinner spinner = (Spinner)findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -70,6 +78,7 @@ public class ClosetActivity extends BaseActivity{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = String.valueOf(parent.getItemAtPosition(position));
                 Log.d("TAG",category);
+                order_spinner.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -95,6 +104,7 @@ public class ClosetActivity extends BaseActivity{
     private void submitPost() {
         final String name = mNameField.getText().toString();
         final String info = mInfoField.getText().toString();
+        final String location = mLocationField.getText().toString();
 
         // Title is required
         if (TextUtils.isEmpty(name)) {
@@ -132,7 +142,7 @@ public class ClosetActivity extends BaseActivity{
                             // Write new post
                             //saveInStorage();
                             //writeNewPost(userId, user.username, title, body, imageUrl);
-                            saveInStorage(userId, user.username, name, info);
+                            saveInStorage(userId, user.username, name, info, location);
                         }
 
                         // Finish this Activity, back to the stream
@@ -163,11 +173,11 @@ public class ClosetActivity extends BaseActivity{
     }
 
     // [START write_fan_out]
-    private void registerNewCloth(String userId, String username, String category, String name, String info, String imgUrl) {
+    private void registerNewCloth(String userId, String username, String category, String name, String info, String imgUrl, String location) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("clothes").push().getKey();
-        Cloth cloth  = new Cloth(userId, username, category, name, info, imgUrl);
+        Cloth cloth  = new Cloth(userId, username, category, name, info, imgUrl, location);
         Map<String, Object> clothValues = cloth.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -195,10 +205,11 @@ public class ClosetActivity extends BaseActivity{
             //Uri selectedImageUri;
             selectedImageUri = data.getData();
             cloth_selectImage.setImageURI(selectedImageUri); // 골라온 이미지를 임시적으로 표시해주는 imageView에 set
+            order_image.setVisibility(View.INVISIBLE);
         }
     }
 
-    public void saveInStorage(final String userId, final String username, final String name, final String info){
+    public void saveInStorage(final String userId, final String username, final String name, final String info, final String location){
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         final StorageReference storageRef = firebaseStorage.getReference().child(selectedImageUri.getLastPathSegment());
         UploadTask uploadTask = storageRef.putFile(selectedImageUri);
@@ -224,7 +235,7 @@ public class ClosetActivity extends BaseActivity{
                     //여기서 전역변수에 저장했다가 다른곳에서 저장하려면 자꾸 Url에 null이 저장된다. 그러므로 여기서 저장
 
                     //5. firestore에 데이터 저장하는 메서드 saveItem을 직접 정의해서 넣어줌
-                    registerNewCloth(userId, username,  category,name, info, imageUrl);
+                    registerNewCloth(userId, username,  category,name, info, imageUrl, location);
 
                 }
             }

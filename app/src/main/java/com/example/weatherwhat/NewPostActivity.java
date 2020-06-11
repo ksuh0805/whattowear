@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,7 @@ public class NewPostActivity extends BaseActivity{
     private ImageView iv_selectImage;
     private Uri selectedImageUri;
     private String imageUrl;
+    private TextView order_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class NewPostActivity extends BaseActivity{
         mBodyField = findViewById(R.id.fieldBody);
         mSubmitButton = findViewById(R.id.fabSubmitPost);
         iv_selectImage = findViewById(R.id.selectImage);
+        order_image = findViewById(R.id.order_image2);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,6 +180,7 @@ public class NewPostActivity extends BaseActivity{
             //Uri selectedImageUri;
             selectedImageUri = data.getData();
             iv_selectImage.setImageURI(selectedImageUri); // 골라온 이미지를 임시적으로 표시해주는 imageView에 set
+            order_image.setVisibility(View.INVISIBLE);
         }
     }
     public void saveInStorage(){

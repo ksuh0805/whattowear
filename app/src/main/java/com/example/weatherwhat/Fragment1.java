@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -25,9 +26,12 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -54,11 +58,13 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     private LottieAnimationView animationView;
 
     private double temp_max;
+    private TextView max;
     private TextView cityField;
     //private TextView updatedField;
     private TextView currentTemperatureField;
     //private TextView weatherIcon;
     ArrayList<String> needs = new ArrayList<>();
+    Query clothesQuery;
 
     Handler handler;
 
@@ -74,6 +80,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         //updatedField = (TextView) view.findViewById(R.id.updated_field);
         currentTemperatureField = (TextView) view.findViewById(R.id.current_temperature_field);
         //weatherIcon = (TextView) findViewById(R.id.weather_icon);
+        //max = (TextView) view.findViewById(R.id.max);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -102,6 +109,8 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         Log.d("latitude",latitude+ ", " +longitude);
         needs.add("a");
         needs.add("b");
+        String cloth = "가디건";
+        //clothesQuery = getQuery(mDatabase, cloth);
         return view;
     }
 
@@ -147,13 +156,33 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 */
             // Set temperature field
             String formatTemp = "현재 기온 : " + main.getDouble("temp") + " ℃";
+            //currentTemperatureField.setText(formatTemp);
             temp_max = main.getDouble("temp_max");
+            String formatMax = "오늘의 최고 기온 : "+temp_max+" ℃ / 최저 기온 : " +main.getDouble("temp_min") + " ℃";
+            currentTemperatureField.setText(formatMax);
+
+            if(temp_max >= 28){
+                clothesQuery = getQuery(mDatabase, "반팔");
+            }else if(temp_max < 28 && temp_max >= 20){
+                clothesQuery = getQuery(mDatabase, "긴팔");
+            }else if(temp_max <20 && temp_max >= 17 ){
+                Log.d("maxxx", "ddddx");
+                clothesQuery = getQuery(mDatabase, "가디건");
+            }else if(temp_max <17 && temp_max >= 12 ){
+                clothesQuery = getQuery(mDatabase, "자켓");
+            }else if(temp_max <12 && temp_max >= 5 ){
+                clothesQuery = getQuery(mDatabase, "코트");
+            }else{
+                clothesQuery = getQuery(mDatabase, "패딩");
+            }
+
+            max.setText(formatMax);
             if(main.getDouble("temp_max") >= 30){
                 needs.add("양산");
             }else{
                 needs.add("노양산");
             }
-            currentTemperatureField.setText(formatTemp);
+
             /*
             // Set update message
             DateFormat df = DateFormat.getDateTimeInstance();
@@ -347,13 +376,22 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mManager = new LinearLayoutManager(getActivity());
+        mManager.setReverseLayout(true);
+        mManager.setStackFromEnd(true);
+        mRecycler.setLayoutManager(mManager);
+
         // Set up FirebaseRecyclerAdapter with the Query
+        /*
         Query clothesQuery = getQuery(mDatabase, "반팔");
+
+        Log.d("maxxx", String.valueOf(temp_max));
         if(temp_max >= 28){
             clothesQuery = getQuery(mDatabase, "반팔");
         }else if(temp_max < 28 && temp_max >= 20){
             clothesQuery = getQuery(mDatabase, "긴팔");
         }else if(temp_max <20 && temp_max >= 17 ){
+            Log.d("maxxx", "ddddx");
             clothesQuery = getQuery(mDatabase, "가디건");
         }else if(temp_max <17 && temp_max >= 12 ){
             clothesQuery = getQuery(mDatabase, "자켓");
@@ -362,16 +400,19 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         }else{
             clothesQuery = getQuery(mDatabase, "패딩");
         }
-        Query clothes2Query = getQuery(mDatabase, "패딩");
+        //Query clothes2Query = getQuery(mDatabase, "반팔");*/
 
+
+        if(clothesQuery == null){
+        try{
+            Thread.sleep(20000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }}
+        else{
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Cloth>()
                 .setQuery(clothesQuery, Cloth.class)
                 .build();
-
-        mManager = new LinearLayoutManager(getActivity());
-        mManager.setReverseLayout(true);
-        mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(mManager);
 
         mAdapter = new FirebaseRecyclerAdapter<Cloth, ClothViewHolder>(options) {
 
@@ -403,7 +444,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
             }
         };
         mRecycler.setAdapter(mAdapter);
-    }
+    }}
 
     @Override
     public void onStart() {
@@ -426,7 +467,9 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     }
 
     public Query getQuery(DatabaseReference databaseReference, String cloth){
-        return databaseReference.child("user-clothes-category").child(getUid()).equalTo("반팔");
-               // .child(getUid()).child(cloth);
+
+        Log.d("xmaxxx", cloth);
+        //return databaseReference.child("user-clothes-category").child(getUid()).child("반팔");
+         return databaseReference.child("user-clothes-category").child(getUid()).child(cloth);
     }
 }
