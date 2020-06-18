@@ -62,6 +62,7 @@ public class ClothViewHolder extends RecyclerView.ViewHolder {
         infoView.setText(cloth.info);
         content_cloth_name.setText(cloth.name);
         content_cloth_info.setText(cloth.info);
+        content_cloth_location.setText(cloth.location);
         Glide.with(context).load(cloth.imgUrl).into(imageView);
         Glide.with(context).load(cloth.imgUrl).into(head_image);
 
@@ -81,6 +82,10 @@ public class ClothViewHolder extends RecyclerView.ViewHolder {
             category_image.setImageResource(R.drawable.shorts);
         }else if(cloth.category.equals("치마")) {
             category_image.setImageResource(R.drawable.skirt);
+        }else if(cloth.category.equals("점퍼")){
+            category_image.setImageResource(R.drawable.jumper);
+        }else if(cloth.category.equals("모자")){
+            category_image.setImageResource(R.drawable.cap);
         }
     }
 }

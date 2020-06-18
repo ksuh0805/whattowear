@@ -95,7 +95,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 Log.d("TAG", post.title);
                 String imgUrl = post.imgUrl;
                 if(imgUrl == null) {
-                    Glide.with(getApplicationContext()).load("http://10.0.2.2/firstapp/kk.jpg").into(mImgView);
+                    //Glide.with(getApplicationContext()).load("http://10.0.2.2/firstapp/kk.jpg").into(mImgView);
                 }else{
                 Glide.with(getApplicationContext()).load(imgUrl).into(mImgView);
                 }

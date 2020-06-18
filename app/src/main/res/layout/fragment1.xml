@@ -96,6 +96,15 @@
                 android:padding="5dp"
                 android:scrollbars="vertical"
                 tools:listitem="@layout/cell" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/Cloth2List"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:clipToPadding="false"
+                android:padding="5dp"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/cell" />
         </LinearLayout>
     </ScrollView>
     <RelativeLayout

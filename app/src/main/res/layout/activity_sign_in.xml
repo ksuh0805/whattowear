@@ -19,11 +19,11 @@
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_below="@+id/progressBar"
-        android:src="@drawable/firebase_lockup_400" />
+        android:src="@drawable/wearlogo" />
 
     <LinearLayout
         android:id="@+id/layoutEmailPassword"

@@ -24,8 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,9 +49,12 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
     private DatabaseReference mDatabase;
     private FirebaseRecyclerAdapter<Cloth, ClothViewHolder> mAdapter;
+    private FirebaseRecyclerAdapter<Cloth, ClothViewHolder> mAdapter2;
     private RecyclerView mRecycler;
+    private RecyclerView mRecycler2;
     private Context context;
     private LinearLayoutManager mManager;
+    private LinearLayoutManager mManager2;
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
@@ -58,7 +63,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
     private LottieAnimationView animationView;
 
     private double temp_max;
-    private TextView max;
     private TextView cityField;
     //private TextView updatedField;
     private TextView currentTemperatureField;
@@ -88,6 +92,9 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         mRecycler = view.findViewById(R.id.ClothList);
         mRecycler.setHasFixedSize(true);
 
+        mRecycler2 = view.findViewById(R.id.Cloth2List);
+        mRecycler2.setHasFixedSize(true);
+
         animationView = (LottieAnimationView) view.findViewById(R.id.lottie);
 
         gpsTracker = new GpsTracker(getActivity());
@@ -105,10 +112,11 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         add_fab.setOnClickListener(this);
         checklist_fab.setOnClickListener(this);
 
-        updateWeatherData(latitude, longitude);
+        //updateWeatherData(latitude, longitude);
+        updateWeatherData(28, 84);
         Log.d("latitude",latitude+ ", " +longitude);
-        needs.add("a");
-        needs.add("b");
+        //needs.add("a");
+        //needs.add("b");
         String cloth = "가디건";
         //clothesQuery = getQuery(mDatabase, cloth);
         return view;
@@ -169,18 +177,17 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
                 Log.d("maxxx", "ddddx");
                 clothesQuery = getQuery(mDatabase, "가디건");
             }else if(temp_max <17 && temp_max >= 12 ){
-                clothesQuery = getQuery(mDatabase, "자켓");
+                clothesQuery = getQuery(mDatabase, "점퍼");
             }else if(temp_max <12 && temp_max >= 5 ){
                 clothesQuery = getQuery(mDatabase, "코트");
             }else{
                 clothesQuery = getQuery(mDatabase, "패딩");
             }
 
-            max.setText(formatMax);
             if(main.getDouble("temp_max") >= 30){
                 needs.add("양산");
             }else{
-                needs.add("노양산");
+                //needs.add("노양산");
             }
 
             /*
@@ -203,6 +210,7 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
     private void setWeatherIcon(int actualId, String openIcon) {
         int id = actualId / 100;
+        Log.d("tggg", String.valueOf(id));
         String icon = "";
         if (actualId == 800) {
             if (openIcon.equals("01d")) {
@@ -381,6 +389,11 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
 
+        mManager2 = new LinearLayoutManager(getActivity());
+        mManager2.setReverseLayout(true);
+        mManager2.setStackFromEnd(true);
+        mRecycler2.setLayoutManager(mManager2);
+
         // Set up FirebaseRecyclerAdapter with the Query
         /*
         Query clothesQuery = getQuery(mDatabase, "반팔");
@@ -405,13 +418,19 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
 
         if(clothesQuery == null){
         try{
-            Thread.sleep(20000);
+            Thread.sleep(5000);
         }catch (InterruptedException e){
             e.printStackTrace();
         }}
+
         else{
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Cloth>()
                 .setQuery(clothesQuery, Cloth.class)
+                .build();
+
+        Query clothes2Query = getQuery(mDatabase, "반팔");
+        FirebaseRecyclerOptions options2 = new FirebaseRecyclerOptions.Builder<Cloth>()
+                .setQuery(clothes2Query, Cloth.class)
                 .build();
 
         mAdapter = new FirebaseRecyclerAdapter<Cloth, ClothViewHolder>(options) {
@@ -444,7 +463,28 @@ public class Fragment1 extends Fragment implements View.OnClickListener{
             }
         };
         mRecycler.setAdapter(mAdapter);
-    }}
+
+
+        mAdapter2 = new FirebaseRecyclerAdapter<Cloth, ClothViewHolder>(options) {
+
+            @Override
+            public ClothViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+                return new ClothViewHolder(inflater.inflate(R.layout.cell, viewGroup, false));
+            }
+
+            @Override
+            protected void onBindViewHolder(ClothViewHolder viewHolder, int position, final Cloth model) {
+                final DatabaseReference clothRef = getRef(position);
+
+                // Bind Post to ViewHolder
+                viewHolder.bindToCloth(context, model);
+            }
+        };
+        mRecycler2.setAdapter(mAdapter2);
+
+        }
+    }
 
     @Override
     public void onStart() {
